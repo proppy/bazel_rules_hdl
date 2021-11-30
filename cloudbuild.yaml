@@ -63,6 +63,9 @@ steps:
     EXTRA_BUILD_BAZEL_ARGS="--invocation_id=$(cat build_invocation_id.txt)" \
     EXTRA_TEST_BAZEL_ARGS="--invocation_id=$(cat test_invocation_id.txt)" \
         tools/test_everything.py
+    bazel build //:dist
+    cp bazel-bin/dist.tar.gz eda-tools-dist-$REVISION_ID.tar.gz
+    
   timeout: 10800s
   volumes:
   - name: 'ssh'
@@ -70,3 +73,8 @@ steps:
 
 substitutions:
   _USERNAME: $(commit.author.login)
+artifacts:
+  objects:
+    location: 'gs://proppy-eda/eda-tools-dist-$BUILD_ID/'
+    paths:
+    - 'eda-tools-dist-$REVISION_ID.tar.gz'
